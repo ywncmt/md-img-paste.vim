@@ -96,11 +96,26 @@ function! RandomName()
     return l:new_random
 endfunction
 
+function! ConfigureImgDir()
+    call inputsave()
+    let g:mdip_imgdir = input('Image dir name: ')   
+    call inputrestore()
+endfunction
+
+command! SetMdImgDir :call ConfigureImgDir()
+
 function! InputName()
     call inputsave()
     let name = input('Image name: ')
     call inputrestore()
     return name
+endfunction
+
+function! InputCaption()
+    call inputsave()
+    let caption = input('Image caption: ')
+    call inputrestore()
+    return caption
 endfunction
 
 function! mdip#MarkdownClipboardImage()
@@ -114,6 +129,7 @@ function! mdip#MarkdownClipboardImage()
     " change temp-file-name and image-name
     let g:mdip_tmpname = InputName()
     " let g:mdip_imgname = g:mdip_tmpname
+    let g:mdip_caption = InputCaption() 
 
     let tmpfile = SaveFileTMP(workdir, g:mdip_tmpname)
     if tmpfile == 1
@@ -122,7 +138,7 @@ function! mdip#MarkdownClipboardImage()
         " let relpath = SaveNewFile(g:mdip_imgdir, tmpfile)
         let extension = split(tmpfile, '\.')[-1]
         let relpath = g:mdip_imgdir . '/' . g:mdip_tmpname . '.' . extension
-        execute "normal! i![Image](" . relpath . ")"
+        execute "normal! i![" . g:mdip_caption . "](" . relpath . ")"
     endif
 endfunction
 
