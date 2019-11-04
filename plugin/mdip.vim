@@ -1,3 +1,13 @@
+python3 << endOfPython
+fig_template = '\\begin{figure}[htpb]\n\\centering\n\\includegraphics[width=0.8\\textwidth]{%s}\n\\caption{%s}\n\\end{figure}'  
+def get_latex_fig(var_name, img_path, caption):
+    vim.vars[var_name] = fig_template % (img_path, caption)  
+
+def insert_latex_fig(var_name, img_path, caption):
+    vim.command('normal! i ' + fig_template % (img_path, caption))
+    
+endOfPython
+
 function! SafeMakeDir()
     if s:os == "Windows"
         let outdir = expand('%:p:h') . '\' . g:mdip_imgdir
@@ -141,6 +151,31 @@ function! mdip#MarkdownClipboardImage()
         execute "normal! i![" . g:mdip_caption . "](" . relpath . ")"
     endif
 endfunction
+
+function! mdip#MarkdownClipboardImageLaTeX()
+    " detect os: https://vi.stackexchange.com/questions/2572/detect-os-in-vimscript
+    let s:os = "Windows"
+    if !(has("win64") || has("win32") || has("win16"))
+        let s:os = substitute(system('uname'), '\n', '', '')
+    endif
+
+    let workdir = SafeMakeDir()
+    " change temp-file-name and image-name
+    let g:mdip_tmpname = InputName()
+    " let g:mdip_imgname = g:mdip_tmpname
+    let g:mdip_caption = InputCaption() 
+
+    let tmpfile = SaveFileTMP(workdir, g:mdip_tmpname)
+    if tmpfile == 1
+        return
+    else
+        " let relpath = SaveNewFile(g:mdip_imgdir, tmpfile)
+        let extension = split(tmpfile, '\.')[-1]
+        let relpath = g:mdip_imgdir . '/' . g:mdip_tmpname . '.' . extension
+        py3 insert_latex_fig("mdip_latex_result", vim.eval("relpath"), vim.vars["mdip_caption"])   
+    endif
+endfunction
+
 
 if !exists('g:mdip_imgdir')
     let g:mdip_imgdir = 'img'
