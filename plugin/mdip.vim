@@ -5,7 +5,8 @@ def get_latex_fig(var_name, img_path, caption):
 
 def insert_latex_fig(var_name, img_path, caption):
     vim.command('normal! i ' + fig_template % (img_path, caption))
-    
+
+from dirautomate import *
 endOfPython
 
 function! SafeMakeDir()
