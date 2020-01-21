@@ -187,3 +187,13 @@ endif
 if !exists('g:mdip_imgname')
     let g:mdip_imgname = 'image'
 endif
+
+function! mdip#AutoSelectImgDir()
+    py3 SetSelectedAs()
+    "echo printf('ImgDir switched to %s automatically!', g:mdip_imgdir)
+endfunction
+
+
+
+
+
